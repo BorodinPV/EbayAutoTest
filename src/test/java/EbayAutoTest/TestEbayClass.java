@@ -8,6 +8,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -15,11 +16,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
-
 public class TestEbayClass {
 
     private static WebDriver driver;
-    private WebDriverWait wait = (new WebDriverWait(driver, 10));
 
     @BeforeClass
     public static void proDefault() {
@@ -34,42 +33,72 @@ public class TestEbayClass {
     @Test
     public void userToRegister() {
 
-        driver.findElement(By.xpath("/*//*[@id=\"gh-ug-flex\"]/a")).click();
+        driverXpathElement("//*[@id=\"gh-ug-flex\"]/a").click();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         System.out.println("Page title is: " + driver.getTitle());
 
-        WebElement firstname = driver.findElement(By.id("firstname"));
-        firstname.sendKeys("Павел");
+        driverIdElement("firstname").sendKeys("Test");
 
-        WebElement lastname = driver.findElement(By.id("lastname"));
-        lastname.sendKeys("Бородин");
+        driverIdElement("lastname").sendKeys("Test");
 
-        WebElement email = driver.findElement(By.id("email"));
-        email.sendKeys("ebayautotest2@rambler.ru");
+        driverIdElement("email").sendKeys("ebayautotest19@rambler.ru");
 
-        WebElement PASSWORD = driver.findElement(By.id("PASSWORD"));
-        PASSWORD.sendKeys("rwerer5w45GHSG");
+        driverIdElement("PASSWORD").sendKeys("rwerer5w45GHSG");
 
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("ppaFormSbtBtn")));
-        WebElement ppaFormSbtBtn = driver.findElement(By.id("ppaFormSbtBtn"));
-        ppaFormSbtBtn.click();
+
+        driverWait().until(ExpectedConditions.elementToBeClickable(By.id("ppaFormSbtBtn")));
+        driverIdElement("ppaFormSbtBtn").click();
+
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        driver.findElement(By.id("gh-ac")).sendKeys("blackberry");
-        driver.findElement(By.id("gh-btn")).click();
+        driverIdElement("gh-ac").sendKeys("blackberry");
+        driverIdElement("gh-btn").click();
 
-        scrollDown("//*[@id=\"h2_rtm_csa_391\"]");
-        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[@id=\"ListViewInner\"]/li[@class=\"sresult lvresult clearfix li shic\"]")));
-        List<WebElement> list = driver.findElements(By.xpath("//*[@id=\"ListViewInner\"]/li[contains(text(), sresult)]"));
+        scroll("/*//*[@id=\"h2_rtm_csa_391\"]");
+        driverWait().until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("/*//*[@id=\"ListViewInner\"]/li[@class=\"sresult lvresult clearfix li shic\"]")));
+        List<WebElement> list = driver.findElements(By.xpath("/*//*[@id=\"ListViewInner\"]/li[contains(text(), sresult)]"));
         System.out.println("Размер Массива " + list.size());
+        scroll("/*//*[@id=\"gh-ac\"]");
+
+        driverWait().until(ExpectedConditions.elementToBeClickable(By.id("gh-ug")));
+        Actions actions = new Actions(driver);
+        actions.moveToElement(driverIdElement("gh-ug")).click().build().perform();
+        actions.moveToElement(driverXpathElement("//div[@id=\"gh-eb-u-o\"]/ul/li[@id=\"gh-uo\"]/a")).click().build().perform();
+
+        String exitText = driverXpathElement("/*//*[@id=\"AreaTitle\"]/div/table/tbody/tr/td/div/div[2]/div/h1/span").getText();
+        if (exitText.equals("Выход успешно выполнен. До скорой встречи.")) {
+            System.out.println(exitText);
+        } else {
+            System.out.println("Ошибка при выходе из профиля");
+        }
     }
 
-    public void scrollDown(String xpath) {
+    //Поиск элемента по Xpath
+    public WebElement driverXpathElement(String xpath) {
+
+        return driver.findElement(By.xpath(xpath));
+    }
+
+    //Поиск элемента по Id
+    public WebElement driverIdElement(String id) {
+
+        return driver.findElement(By.id(id));
+    }
+
+    //Скролл для прогрузки всех элементов
+    public void scroll(String xpath) {
         WebElement element = driver.findElement(By.xpath(xpath));
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", element);
+    }
+
+    //Явное ожидание
+    public WebDriverWait driverWait() {
+        WebDriverWait wait = (new WebDriverWait(driver, 10));
+        return wait;
     }
 
     @AfterClass
     public static void testDown() {
         driver.quit();
     }
+
 }
