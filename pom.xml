@@ -9,9 +9,14 @@
     <version>1.0</version>
 
     <properties>
+        <aspectj.version>1.8.9</aspectj.version>
+        <compiler.version>1.7</compiler.version>
         <allure.version>1.3.6</allure.version>
-        <aspectj.version>1.7.4</aspectj.version>
+        <alluremaven.version>2.5</alluremaven.version>
     </properties>
+
+    <name>Allure JUnit Example</name>
+    <description>Allure JUnit and WebDriver Usage Example</description>
 
     <dependencies>
         <dependency>
@@ -55,6 +60,14 @@
                 </dependencies>
             </plugin>
 
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>2.8</version>
+                <configuration>
+                    <reportVersion>2.3.1</reportVersion>
+                </configuration>
+            </plugin>
 
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
@@ -63,19 +76,9 @@
                     <webAppSourceDirectory>${project.build.directory}/site/allure-maven-plugin</webAppSourceDirectory>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
-
-    <reporting>
-        <excludeDefaults>true</excludeDefaults>
-        <plugins>
-            <plugin>
-                <groupId>ru.yandex.qatools.allure</groupId>
-                <artifactId>allure-maven-plugin</artifactId>
-                <version>${allure.version}</version>
-            </plugin>
-        </plugins>
-    </reporting>
 
 
 </project>
